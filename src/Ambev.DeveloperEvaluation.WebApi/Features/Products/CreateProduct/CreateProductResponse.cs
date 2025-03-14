@@ -33,11 +33,6 @@ public class CreateProductResponse
     public string Category { get; set; } = string.Empty;
 
     /// <summary>
-    /// The URL of the product's image
-    /// </summary>
-    public string Image { get; set; } = string.Empty;
-
-    /// <summary>
     /// The rating information of the product
     /// </summary>
     public RatingResponse Rating { get; set; } = new();

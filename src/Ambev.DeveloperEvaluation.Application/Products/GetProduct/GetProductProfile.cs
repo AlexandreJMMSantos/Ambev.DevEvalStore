@@ -14,6 +14,11 @@ public class GetProductProfile : Profile
     public GetProductProfile()
     {
         CreateMap<GetProductCommand, Product>();
-        CreateMap<Product, GetProductResult>();
+        //CreateMap<Product, GetProductResult>();
+
+        CreateMap<Product, GetProductResult>()
+            .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => src.Rating));
+
+        CreateMap<Rating, ProductRating>();
     }
 }
