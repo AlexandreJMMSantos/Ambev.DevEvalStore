@@ -10,6 +10,8 @@ using Ambev.DeveloperEvaluation.Application.Sales.GetSale;
 using Ambev.DeveloperEvaluation.Application.Sales.DeleteSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetAllSales;
 using Ambev.DeveloperEvaluation.Application.Sale.GetAllSales;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.UpdateSale;
+using Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales;
 
@@ -32,6 +34,34 @@ public class SalesController : BaseController
     {
         _mediator = mediator;
         _mapper = mapper;
+    }
+
+    /// <summary>
+    /// Updates an existing sale
+    /// </summary>
+    /// <param name="request">The sale update request</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The updated sale details</returns>
+    [HttpPut]
+    [ProducesResponseType(typeof(ApiResponseWithData<UpdateSaleResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpdateSale([FromBody] UpdateSaleRequest request, CancellationToken cancellationToken)
+    {
+        var validator = new UpdateSaleRequestValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
+
+        var command = _mapper.Map<UpdateSaleCommand>(request);
+        var response = await _mediator.Send(command, cancellationToken);
+
+        return Ok(new ApiResponseWithData<UpdateSaleResponse>
+        {
+            Success = true,
+            Message = "Sale updated successfully",
+            Data = _mapper.Map<UpdateSaleResponse>(response)
+        });
     }
 
     /// <summary>
